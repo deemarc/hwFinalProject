@@ -21,9 +21,11 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity seg7_2digit is
 	port( clk :in std_logic;
 		  rst :in std_logic;
-		  Din :in std_logic_vector(7 downto 0);
-		  digit_scan :out std_logic_vector(3 downto 0);
-		  seg7_out :out std_logic_vector(7 downto 0)
+		  sel :in std_logic; -- selector
+		  x_tick		: in std_logic_vector(11 downto 0); -- x position in term of tick
+		  y_tick		: in std_logic_vector(11 downto 0); -- y position in term of tick
+		  seg7_out :out std_logic_vector(7 downto 0);
+		  digit_scan :out std_logic_vector(3 downto 0)
 		);
 end seg7_2digit;
 
@@ -105,18 +107,34 @@ begin
 			   	case digit_cnt is
 			   		when 1 => digit_scan_tmp <= "1110";
 			   		when 2 => digit_scan_tmp <= "1101";
-		   			when 3 => digit_scan_tmp <= "1111";								
+		   			when 3 => digit_scan_tmp <= "1011";								
 		   			when others  => digit_scan_tmp <= "1111";
 			   	end case;  							
-			end if;
-		end if;		
+				end if;
+			end if;		
 	end process;
    ---- assigne digit_scan_tmp to digit_scan port
    digit_scan <= digit_scan_tmp;	
 	
    ----------- Din register ------------------
-	 	Din_reg(0) <= Din(3 downto 0);
-		Din_reg(1) <= Din(7 downto 4);
+	process(clk,rst,sel,x_tick,y_tick)
+	begin
+		if rst = '1' then
+			Din_reg(0) <= "0000";
+			Din_reg(1) <= "0000";
+			Din_reg(2) <= "0000";
+		elsif clk'event and clk = '1' then
+			if sel = '0' then
+				Din_reg(0) <= x_tick(3 downto 0);
+				Din_reg(1) <= x_tick(7 downto 4);
+				Din_reg(2) <= x_tick(11 downto 8);
+			else
+				Din_reg(0) <= y_tick(3 downto 0);
+				Din_reg(1) <= y_tick(7 downto 4);
+				Din_reg(2) <= y_tick(11 downto 8);
+			end if;
+		end if;
+	end process;
 
    
    ----------- multiplexer ---------------
@@ -151,8 +169,8 @@ begin
 			when "1101" => seg7_tmp	<=   D_seg ;	
 			when "1110" => seg7_tmp	<=   E_seg ;	
 			when "1111" => seg7_tmp	<=   F_seg ;
-			
- 			when others => seg7_tmp <= off_seg;			
+			when others => seg7_tmp <= zero_seg;	
+ 			--when others => seg7_tmp <= off_seg;			
 		end case;
 	end process;
    seg7_out <= not  seg7_tmp;

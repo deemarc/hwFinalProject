@@ -8,13 +8,16 @@
 -- 
 library ieee;
 use ieee.std_logic_1164.all;
+use work.lab02_pack.all;
+
 Entity receiver is
-	generic(Bconst :natural;
-	        Bconst_div2 : natural );
+	generic(Bconst :baudrate_type:=(0,1302,2604,5208);
+	        Bconst_div2:baudrate_type:=(0,561,1302,2604));
 	port(clk   : in std_logic;
 	     rst   : in std_logic;
 		 RxD   : in std_logic;
 		 Baud_Div 	: in std_logic;     -- Baudrate control signal
+		 baud_index : in  integer range 0 to 3;
 		 Data_out   : out std_logic_vector(7 downto 0);
 		 int_Rx     : out std_logic	);
 end;
@@ -22,7 +25,7 @@ architecture RTL of receiver is
 type Rxstate_type is (idle_st,sampling_st,cnt_st);
 signal Rx_state : Rxstate_type;
 signal bit_cnt :integer range  0 to 9;
-signal samp_cnt :integer range 0 to Bconst;
+signal samp_cnt :integer range 0 to Bconst(3);
 signal samp_en :std_logic;
 signal detect_reg :std_logic_vector(3 downto 0);
 signal zero_detect :Boolean;
@@ -83,14 +86,14 @@ begin
 					Rx_state <= sampling_st;
 				end if;				
 			when  sampling_st =>
-				if samp_cnt = Bconst then
+				if samp_cnt = Bconst(baud_index) then
 					samp_cnt <= 0 ;
 					Rx_state <= cnt_st;										
 				else
 					samp_cnt <= samp_cnt + 1;
 				end if;				
 				
-				if samp_cnt = Bconst_Div2 then
+				if samp_cnt = Bconst_Div2(baud_index) then
 					samp_en <= '1';
 				else
 					samp_en <= '0';

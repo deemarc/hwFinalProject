@@ -13,29 +13,28 @@ use IEEE.STD_LOGIC_1164.all;
 
 package lab02_pack is
 
+	type baudrate_type is array(0 to 3) of integer range 0 to 6000;
 -- type <new_type> is
 --  record
 --    <type_name>        : std_logic_vector( 7 downto 0);
 --    <type_name>        : std_logic;
-	type baudrate_type is array(0 to 3) of integer range 0 to 5208;
-	--type baudrate_type is array(0 to 3) of integer range 0 to 5208;
--- end record;
---
+-- end record;	
+--	
 -- Declare constants
 --
 -- constant <constant_name>		: time := <time_unit> ns;
 -- constant <constant_name>		: integer := <value;
-	constant zero_seg 				: std_logic_vector(7 downto 0) := "11111110";-- a b c d e f g
-	constant one_seg 					: std_logic_vector(7 downto 0) := "01100000";
-	constant two_seg 					: std_logic_vector(7 downto 0) := "11011010";
-	constant three_seg 				: std_logic_vector(7 downto 0) := "11110010";
-	constant four_seg 				: std_logic_vector(7 downto 0) := "01100110";
-	constant five_seg 				: std_logic_vector(7 downto 0) := "10110110";
-	constant six_seg 					: std_logic_vector(7 downto 0) := "10111110";
-	constant seven_seg 				: std_logic_vector(7 downto 0) := "11100000";
-	constant eight_seg 				: std_logic_vector(7 downto 0) := "11111110";
-	constant nine_seg 				: std_logic_vector(7 downto 0) := "11110110";
-	constant off_seg 					: std_logic_vector(7 downto 0) := "00000000";
+	constant zero_seg 				: std_logic_vector(7 downto 0) := "00000010";-- a b c d e f g
+	constant one_seg 					: std_logic_vector(7 downto 0) := "10011110";--"01100000";
+	constant two_seg 					: std_logic_vector(7 downto 0) := "00100100";--"11011010";
+	constant three_seg 				: std_logic_vector(7 downto 0) := "00001100";--"11110010";
+	constant four_seg 				: std_logic_vector(7 downto 0) := "10011000";--"01100110";
+	constant five_seg 				: std_logic_vector(7 downto 0) := "01001000";--"10110110";
+	constant six_seg 					: std_logic_vector(7 downto 0) := "01000000";--"10111110";
+	constant seven_seg 				: std_logic_vector(7 downto 0) := "00011110";--"11100000";
+	constant eight_seg 				: std_logic_vector(7 downto 0) := "00000000";--"11111110";
+	constant nine_seg 				: std_logic_vector(7 downto 0) := "00001000";--"11110110";
+	constant off_seg 					: std_logic_vector(7 downto 0) := "11111110";--"00000000";
 
 
 -- Declare functions and procedure

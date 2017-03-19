@@ -19,7 +19,7 @@ Entity Transmitter is
 end;
 
 architecture RTL of Transmitter is
-	type TxState_type is (Idle_st, load_st, shift_st, intrpt_st,db_st);
+	type TxState_type is (Idle_st, load_st, shift_st, intrpt_st);
 	signal Tx_state : TxState_type;
 	signal Tx_reg :std_logic_vector(9 downto 0);
 	constant start_bit :std_logic := '0';
@@ -41,19 +41,9 @@ begin
 				TxD <= '1';
 				Int_Tx <= '0';
 				if WE_n = '1' then
-					Tx_state <= db_st;
-					db_cnt := 0;
-				end if;
-			----debuncing
-			when db_st =>
-			    TxD <= '1';
-				if db_cnt = 1000000 and WE_n = '1' then
 					Tx_state <= load_st;
 					db_cnt := 0;
-				else
-					Tx_state <= db_st;
-					db_cnt := db_cnt + 1;
-				end if;	
+				end if;
 				
 			when load_st   =>   -- load data from data_in to Tx_reg when WE_n is activate
 				Tx_reg	 <= stop_bit & Data_in & start_bit;
