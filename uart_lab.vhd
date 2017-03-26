@@ -40,8 +40,8 @@ generic(Bconst :baudrate_type:=(0,1302,2604,5208);
            RxD : in  STD_LOGIC;
            Int_Tx : out  STD_LOGIC;
            TxD : out  STD_LOGIC;
-           digit_scan : out  STD_LOGIC_VECTOR (3 downto 0);
-           seg7_out : out  STD_LOGIC_VECTOR (7 downto 0);
+           --digit_scan : out  STD_LOGIC_VECTOR (3 downto 0);
+           --seg7_out : out  STD_LOGIC_VECTOR (7 downto 0);
 			  pwm_motor : out STD_LOGIC_VECTOR (1 downto 0);
            int_Rx : out  STD_LOGIC);
 end uart_lab;
@@ -150,22 +150,22 @@ begin
 
 	
 								
-	u5:seg7_2digit port map(clk => clk,
-									rst => rst,
-									sel => Data_in(7),
-									x_tick =>Dxtick,
-									y_tick =>Dytick,
-									seg7_out => seg7_out,
-									digit_scan => digit_scan);
+--	u5:seg7_2digit port map(clk => clk,
+--									rst => rst,
+--									sel => Data_in(7),
+--									x_tick =>Dxtick,
+--									y_tick =>Dytick,
+--									seg7_out => seg7_out,
+--									digit_scan => digit_scan);
 	
 	u6:servoControl port map(clk => clk,
 									rst => rst,
 									sel => Data_in(6),
-									x_tick =>DBxtick,
-									y_tick =>DBytick,
+									x_tick =>Dxtick,
+									y_tick =>Dytick,
 									pwm_motor=>pwm_motor);	
-	DBxtick<=Dxtick;
-	DBytick<=Dytick;
+--	DBxtick<=Dxtick;
+--	DBytick<=Dytick;
 	int_Rx <= int_rxSig;
 end Behavioral;
 
