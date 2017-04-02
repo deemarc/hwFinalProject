@@ -40,8 +40,8 @@ generic(Bconst :baudrate_type:=(0,1302,2604,5208);
            RxD : in  STD_LOGIC;
            Int_Tx : out  STD_LOGIC;
            TxD : out  STD_LOGIC;
-           --digit_scan : out  STD_LOGIC_VECTOR (3 downto 0);
-           --seg7_out : out  STD_LOGIC_VECTOR (7 downto 0);
+           digit_scan : out  STD_LOGIC_VECTOR (3 downto 0);
+           seg7_out : out  STD_LOGIC_VECTOR (7 downto 0);
 			  pwm_motor : out STD_LOGIC_VECTOR (1 downto 0);
            int_Rx : out  STD_LOGIC);
 end uart_lab;
@@ -82,8 +82,10 @@ architecture Behavioral of uart_lab is
 		  sel :in std_logic; -- selector
 		  x_tick		: in std_logic_vector(11 downto 0); -- x position in term of tick
 		  y_tick		: in std_logic_vector(11 downto 0); -- y position in term of tick
-		  seg7_out :out std_logic_vector(7 downto 0);
-		  digit_scan :out std_logic_vector(3 downto 0)
+		  x_tInt		: out integer range 0 to 1000000;
+		  y_tInt		: out integer range 0 to 1000000;
+		  seg7_out 	:out std_logic_vector(7 downto 0);
+		  digit_scan:out std_logic_vector(3 downto 0)
 		);
 	end component;
 	component uartDecoder is
@@ -101,8 +103,8 @@ architecture Behavioral of uart_lab is
     Port ( clk :in std_logic;
 			  rst :in std_logic;
 			  sel	:in std_logic; -- selector
-			  x_tick		: in std_logic_vector(11 downto 0); -- x position in term of tick
-			  y_tick		: in std_logic_vector(11 downto 0); -- y position in term of tick
+			  x_tick		: in integer range 0 to 1000000; -- x position in term of tick
+			  y_tick		: in integer range 0 to 1000000; -- y position in term of tick
 			  pwm_motor : out STD_LOGIC_VECTOR (1 downto 0));
 	end component;
 	
@@ -112,8 +114,8 @@ signal Drx:std_logic_vector(7 downto 0);
 signal Dtx:std_logic_vector(7 downto 0);
 signal Dxtick:std_logic_vector(11 downto 0);
 signal Dytick:std_logic_vector(11 downto 0);
-signal DBxtick:std_logic_vector(11 downto 0);
-signal DBytick:std_logic_vector(11 downto 0);
+signal Ixtick:integer range 0 to 1000000;
+signal Iytick:integer range 0 to 1000000;
 signal baud_index:integer range 0 to 3;
 signal int_rxSig :STD_LOGIC;
 
@@ -150,19 +152,21 @@ begin
 
 	
 								
---	u5:seg7_2digit port map(clk => clk,
---									rst => rst,
---									sel => Data_in(7),
---									x_tick =>Dxtick,
---									y_tick =>Dytick,
---									seg7_out => seg7_out,
---									digit_scan => digit_scan);
+	u5:seg7_2digit port map(clk => clk,
+									rst => rst,
+									sel => Data_in(7),
+									x_tick =>Dxtick,
+									y_tick =>Dytick,
+									x_tInt =>Ixtick,
+									y_tInt =>Iytick,
+									seg7_out => seg7_out,
+									digit_scan => digit_scan);
 	
 	u6:servoControl port map(clk => clk,
 									rst => rst,
 									sel => Data_in(6),
-									x_tick =>Dxtick,
-									y_tick =>Dytick,
+									x_tick =>Ixtick,
+									y_tick =>Iytick,
 									pwm_motor=>pwm_motor);	
 --	DBxtick<=Dxtick;
 --	DBytick<=Dytick;

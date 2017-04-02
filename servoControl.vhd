@@ -33,8 +33,8 @@ entity servoControl is
     Port ( clk :in std_logic;
 			  rst :in std_logic;
 			  sel :in std_logic; -- selector
-			  x_tick		: in std_logic_vector(11 downto 0); -- x position in term of tick
-			  y_tick		: in std_logic_vector(11 downto 0); -- y position in term of tick
+			  x_tick		: in integer range 0 to 1000000; -- x position in term of tick
+			  y_tick		: in integer range 0 to 1000000; -- y position in term of tick
 			  pwm_motor : out STD_LOGIC_VECTOR (1 downto 0));
 end servoControl;
 
@@ -86,35 +86,38 @@ begin
 	--tick indicate next PWM
 	tick<= '1' when counter = 0 else '0';
 	-- Duty cycle calculation
-   process(tick, rst, sel,x_tick, y_tick )
-		variable decodeXT:integer range 0 to 1000000:=0;
-		variable decodeYT:integer range 0 to 1000000:=0;
-		begin
-			
-			if rst = '1' then
-				decodeXT:=0;
-				decodeYT:=0;
-			elsif tick='1' and tick'event then
-				if sel = '1' then
-					decodeXT:= to_integer(unsigned(x_tick))*50;
-					if decodeXT > upperB then
-						decodeXT:= upperB;
-					end if;
-					decodeYT:= to_integer(unsigned(y_tick))*50;
-					if decodeYT > upperB then
-						decodeYT:= upperB;
-					end if;
-				else
-					decodeXT:=0;
-					decodeYT:=0;
-				end if;
-			end if;
-				
-			duty_cycle_next(0) <= decodeXT;
-			duty_cycle_next(1) <= decodeYT;
-             
-   end process;
+--   process(tick, rst, sel,x_tick, y_tick )
+--		variable decodeXT:integer range 0 to 1000000:=0;
+--		variable decodeYT:integer range 0 to 1000000:=0;
+--		begin
+--			
+--			if rst = '1' then
+--				decodeXT:=0;
+--				decodeYT:=0;
+--			elsif tick='1' and tick'event then
+--				if sel = '1' then
+--					decodeXT:= x_tick*50;
+--					if decodeXT > upperB then
+--						decodeXT:= upperB;
+--					end if;
+--					decodeYT:= y_tick*50;
+--					if decodeYT > upperB then
+--						decodeYT:= upperB;
+--					end if;
+--				else
+--					decodeXT:=0;
+--					decodeYT:=0;
+--				end if;
+--			end if;
+--				
+--			duty_cycle_next(0) <= decodeXT;
+--			duty_cycle_next(1) <= decodeYT;
+--             
+--   end process;
 	--Buffer
+	duty_cycle_next(0) <= x_tick*50 when sel ='1' else 0;
+	duty_cycle_next(1) <= y_tick*50 when sel ='1' else 0;
+
 	pwm_motor(0)<=pwm_reg(0);
 	pwm_motor(1)<=pwm_reg(1); 
 	pwm_next(0)<= '1' when counter < duty_cycle(0) else

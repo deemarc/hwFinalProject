@@ -17,6 +17,8 @@
 ---------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
 
 entity seg7_2digit is
 	port( clk :in std_logic;
@@ -24,6 +26,8 @@ entity seg7_2digit is
 		  sel :in std_logic; -- selector
 		  x_tick		: in std_logic_vector(11 downto 0); -- x position in term of tick
 		  y_tick		: in std_logic_vector(11 downto 0); -- y position in term of tick
+		  x_tInt		: out integer range 0 to 1000000;
+		  y_tInt		: out integer range 0 to 1000000;
 		  seg7_out :out std_logic_vector(7 downto 0);
 		  digit_scan :out std_logic_vector(3 downto 0)
 		);
@@ -118,12 +122,16 @@ begin
 	
    ----------- Din register ------------------
 	process(clk,rst,sel,x_tick,y_tick)
+	variable decodeXT:integer range 0 to 1000000:=0;
+	variable decodeYT:integer range 0 to 1000000:=0;
 	begin
 		if rst = '1' then
 			Din_reg(0) <= "0000";
 			Din_reg(1) <= "0000";
 			Din_reg(2) <= "0000";
 		elsif clk'event and clk = '1' then
+		decodeXT:= to_integer(unsigned(x_tick));
+		decodeYT:= to_integer(unsigned(y_tick));
 			if sel = '0' then
 				Din_reg(0) <= x_tick(3 downto 0);
 				Din_reg(1) <= x_tick(7 downto 4);
@@ -134,6 +142,8 @@ begin
 				Din_reg(2) <= y_tick(11 downto 8);
 			end if;
 		end if;
+		x_tInt <= decodeXT;
+		y_tInt <= decodeYT;
 	end process;
 
    
